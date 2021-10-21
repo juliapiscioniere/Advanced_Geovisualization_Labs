@@ -1,0 +1,18 @@
+---
+title: "Lab1"
+author: "Julia Piscioniere"
+date: "10/21/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+```
+
+##Assignment
+Assignment 
+
+1. What are the benefits and challenges of an open data science approach? Give an example based on this week's reading. (1-2 paragraphs)
+2. Knit a markdown document that demonstrates an analysis of this or other data (include: text explaining your analysis, figures and geovisualizations)
+
+Bonus: Include a screen grab of the history of your git commits. What is your strategy for using git?
