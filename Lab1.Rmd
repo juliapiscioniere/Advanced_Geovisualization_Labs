@@ -2,10 +2,113 @@
 title: "Lab1"
 author: "Julia Piscioniere"
 date: "10/21/2021"
-output: html_document
+output:
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
+library(ggplot2)
+library(sf)
+library(tidyverse)
+library(gridExtra)
+library(ggspatial)
+library(viridis)
+
+boulder <- st_read("Boulder_Data/BoulderSocialMedia.shp")
+boulder = st_transform(boulder, 26753) 
+```
+
+### Summary Statistics of Boulder, CO Hiking Dataset
+```{r}
+summary(boulder)
+```
+
+These are the summary statistics of each attribute in the Boulder dataset. Summary statistics are one of the main ways to learn about your dataset. I think that for this dataset, the most important metrics are the ranges and averages of each attribute. Most of the variables in the dataset are the current points' distance from the locations (trails, climbing walls, bike paths, etc.) For example, the hikers' average distance 
+to the nearest climbing wall is 739.2 meters. This type of dataset leaves room for both geospatial modeling and statistical analysis. 
+
+#### Check if there are any null or missing values in the dataset
+```{r}
+is.null(boulder)
+```
+If there were null values, I would have gotten rid of those rows. They can interfere with analysis, throw errors, and will not effect this large of a dataset when you delete them (assuming there are not a large number of them). This is especially important for a spatial dataset. 
+
+### First 6 instances of the dataset:
+```{r}
+head(boulder)
+```
+
+From here we know the data is sectioned off by the DB attribute. We also know that the distances are not true distances since they are all the same here. I am not sure how the data was created but it is good to know when analyzing. 
+
+
+Let's take a look at the box plots of the relationships between Pano and Flickr datasets based on 6 of the attributes:
+```{r}
+boulder %>%
+  filter(DB ==  'Pano' | DB == 'Flickr') %>%
+  ggplot(aes(x=DB, y=Hydro_dis)) + 
+  geom_boxplot() -> plot_1
+
+boulder %>%
+  filter(DB ==  'Pano' | DB == 'Flickr') %>%
+  ggplot(aes(x=DB, y=Climb_dist)) + 
+  geom_boxplot() -> plot_2
+
+boulder %>%
+  filter(DB ==  'Pano' | DB == 'Flickr') %>%
+  ggplot(aes(x=DB, y=TrailH_Dis)) + 
+  geom_boxplot() -> plot_3
+
+boulder %>%
+  filter(DB ==  'Pano' | DB == 'Flickr') %>%
+  ggplot(aes(x=DB, y=PrarDg_Dis)) + 
+  geom_boxplot() -> plot_4
+
+boulder %>%
+  filter(DB ==  'Pano' | DB == 'Flickr') %>%
+  ggplot(aes(x=DB, y= Bike_dis)) + 
+  geom_boxplot() -> plot_5
+
+boulder %>%
+  filter(DB ==  'Pano' | DB == 'Flickr') %>%
+  ggplot(aes(x=DB, y=NatMrk_Dis)) + 
+  geom_boxplot() -> plot_6
+  
+grid.arrange(plot_1, plot_2, plot_3, plot_4, plot_5, plot_6, ncol = 3)
+
+```
+
+These box plots show that there is not a significant relationship between Flickr and Pano in any of the dispalyed attributes. This can mean that it is safe to base geo-analysis on either/ both of the datasets without worrying about the difference between the two skewing the results. While we have analyzed the difference between Flickr and Pano, we can also visualize the relationship between some of the variables. 
+```{r}
+boulder_500 <- boulder[sample(nrow(boulder), 800), ]
+
+plot_7 <- ggplot(boulder_500, aes(x = PT_Elev, y = NatMrk_Dis)) + geom_point(aes(color = factor(DB))) 
+plot_8 <- ggplot(boulder_500, aes(x = Bike_dis, y = Trails_dis)) + geom_point(aes(color = factor(DB))) 
+plot_9 <- ggplot(boulder_500, aes(x = PT_Elev, y = PrarDg_Dis)) + geom_point(aes(color = factor(DB))) 
+plot_10 <- ggplot(boulder_500, aes(x = PT_Elev, y = Street_dis)) + geom_point(aes(color = factor(DB))) 
+
+grid.arrange(plot_7, plot_8, plot_9, plot_10, ncol = 2)
+
+
+```
+
+Looking at only these scatter plots, we can make assumptions about the trails, and decide how to procede (going across the columns):
+
+1. Natural landmarks exist at all elevations, so it may be an interesting map to plot national landmarks and elevation using the right data. 
+2. While bike trails and hiking trails have even distributions (similar distances) to start, you are most likely to be further from a biking trail than a walking trail. Also, there is little to no correlation between the distances to a hiking/biking trail. 
+3. As you go up in elevation, you are most likely increasing your distance from prarie dogs; or prarie dogs exist at low elevations (to put it simply)
+4. Distance from the street has nothing to do with elevation
+
+Now we can show maps of some of these distances. The plot on the left is showing the elevation of this section of Boulder. The plot on the right shows the distances from each point to the nearest body of water - lakes, rivers, and creeks. This is another way to show the relationship between two variables, you can see how the elevation and bodies of water are similar. 
+```{r}
+ggplot() +
+    geom_sf(data =boulder, aes(color = Hydro_dis),
+    fill = NA, alpha = .2) +
+    scale_colour_gradientn(colours =  viridis(n = 5, direction = -1)) -> hydro
+
+ggplot() +
+    geom_sf(data =boulder, aes(color=PT_Elev),
+    fill = NA, alpha = .2) -> elev
+
+grid.arrange(hydro, elev, ncol = 2)
 
 ```
 
