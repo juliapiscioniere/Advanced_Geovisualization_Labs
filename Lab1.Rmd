@@ -4,16 +4,16 @@ author: "Julia Piscioniere"
 date: "10/21/2021"
 output:
   html_document: default
+  pdf_document: default
 ---
 
-```{r setup, include=FALSE}
+```{r setup}
 library(ggplot2)
 library(sf)
 library(tidyverse)
 library(gridExtra)
 library(ggspatial)
 library(viridis)
-
 boulder <- st_read("Boulder_Data/BoulderSocialMedia.shp")
 boulder = st_transform(boulder, 26753) 
 ```
@@ -109,20 +109,13 @@ ggplot() +
     fill = NA, alpha = .2) -> elev
 
 grid.arrange(hydro, elev, ncol = 2)
-
 ```
 
-##Assignment
+## Assignment 1
 1. What are the benefits and challenges of an open data science approach? Give an example based on this week's reading. (1-2 paragraphs)
 An open data science approach means collaboration with different people who analyze differently and are asking different questions - this is a great way to get the most out of data. Github, for example, allows people to work together on projects and make progress much faster than if it were each group/person doing it alone. As explained in the first reading by Rob Kitchin, the best way to use data is to ask a question rather than letting the data speak for itself. For example, when creating a prediction model, there are varous different methods and variables to consider and more people means more methods (and hopefully means a better model). This method also increases the transparency of scientists, programmers, or anyone working with the data; the public has grown to start distrusting those who "work" with data for fear it is purely "manipulation." Transparency may be the key to fixing this. Open data science cannot be used in every instance, however, because data can be sensitive. There are many datasets that cannot be open to the public as they contain highly sensitive material such as peoples' private information. Many organizations keep their data private as well, since it has become a commodity. 
 
 2. Knit a markdown document that demonstrates an analysis of this or other data (include: text explaining your analysis, figures and geovisualizations)
 
 Bonus: Include a screen grab of the history of your git commits. What is your strategy for using git?
-My strategy with git depends on the project - If I am working with others then I commit every time I stop working. I only pushed a few times during this project because I was not worried about information getting lost and since it was only one file to track. 
-
-```{r}
-
-
-
-```
+My strategy with git depends on the project - If I am working with others then I commit every time I stop working. I only pushed a few times during this project because I was not worried about information getting lost and since it was only one file to track. I could not include the image in the markdown so I added it to the submission. 
